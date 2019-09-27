@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "iview": "^3.0.0",
+    "moment": "^2.24.0",
     "vue": "^2.5.16",
     "vue-resource": "^1.5.1",
     "vue-router": "^2.8.1",

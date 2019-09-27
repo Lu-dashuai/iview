@@ -13,10 +13,6 @@ import wupinguanli from './components/content/wupinguanli.vue'
 export default new Router({
   routes: [
     {
-      path:'/',
-      redirect: '/adimin/power'
-    },
-    {
       path: '/admin/power',
       component: quanxianguanli
     },

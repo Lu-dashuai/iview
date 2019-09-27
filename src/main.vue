@@ -21,12 +21,12 @@
             <Icon :type="item.iconcls" />
             {{ item.name }}
           </template>
-          <a v-for="it in item.childs" :key="item.id+'-'+it.id" @click="routerTo(it.url)">
+          <router-link v-for="it in item.childs" :key="item.id+'-'+it.id" :to="it.url">
             <MenuItem :name="item.id +'-'+it.id">
               <Icon :type="it.iconcls" />
               {{ it.name }}
             </MenuItem>
-          </a>
+          </router-link>
         </Submenu>
       </Menu>
     </Sider>
@@ -62,30 +62,13 @@ export default {
   methods: {
     getTree() {
       this.$http.get("power/getPower").then(res => {
+        console.log(res)
         if (res.status == 200) {
           this.tree = res.body;
         } else {
           alert("tree数据加载失败");
         }
       });
-    },
-    routerTo(url){//路由跳转
-      alert('路由跳转');
-      beforeRouterTo(url);
-      this.$router.push(url)
-    },
-    beforeRouterTo(url){//跳转前执行
-      alert('跳转前执行');
-      //当路径改变根据path查询出来表头的内容，存入vuex
-      this.$http.get('header/toData', { params: { 'info': url } })//
-        .then(res => {
-          if(res.body.code == 200){
-            console.log('字段：'+JSON.stringify(res))
-            this.$store.state.table_head = res.body.data//存入vuex
-          }else{
-            alert('字段数据加载失败')
-          }
-        });
     }
   },
   components: {},
@@ -102,7 +85,6 @@ export default {
           }
         }
       }
-      
     }
   }
 };

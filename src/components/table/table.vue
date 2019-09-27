@@ -37,128 +37,66 @@
 .ivu-table-row-hover td {
   background-color: #e6f7fe !important;
 }
+
+
 </style>
 <template>
   <div>
+    
     <Table
       ref="selection"
       @on-selection-change="onSelect"
-      height="700"
+      height="475"
       no-data-text="暂无数据"
       :row-class-name="rowClassName"
       :columns="columns4"
       :data="data1"
       highlight-row
     ></Table>
-    <Button @click="handleSelectAll(true)">Set all selected</Button>
-    <Button @click="handleSelectAll(false)">Cancel all selected</Button>
+    <div style="height:5px"></div>
+    <Page
+      :total="this.total"
+      :current="this.page_num"
+      :page-size="this.page_size"
+      :page-size-opts="this.page_size_opts"
+      @on-change="changePage"
+      @on-page-size-change="changePageSize"
+      show-total
+      show-elevator
+      show-sizer
+    />
+    <dialogTab ref="dialogTab"></dialogTab>
   </div>
 </template>
 
 <script>
+import store from "../../store/index.js";
+import moment from "../../../node_modules/moment/moment.js"
+import dialogTab from '../dialog/userDialog.vue'
 export default {
   data() {
     return {
       selecteds: [],
       columns4: [],
-      data1: [
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03",
-          _checked: true
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        },
-        {
-          apple: "John Brown",
-          banana: "18",
-          orange: 18,
-          watermelon: "New York No. 1 Lake Park",
-          milk: "2016-10-03",
-          Bread: "New York No. 1 Lake Park",
-          salt: "2016-10-03",
-          wheat: "New York No. 1 Lake Park",
-          rice: "2016-10-03",
-          soy: "New York No. 1 Lake Park",
-          else: "2016-10-03"
-        }
-      ]
+      to_url: "", //跳转路径
+      data_url: "", //获取参数的路径
+      _if: {}, //查询的条件
+      data1: [], //加载表格的数据
+      page_num: 1, //当前页
+      page_size: 10, //一页多少条
+      total: 0, //数据总数
+      show_total: 0,
+      page_size_opts: [5, 10, 15, 20],
+      
     };
   },
+  store,
+  components:{
+    dialogTab
+  },
   created: function() {
-    this.getTableHeadJson();
+    this.getTableHeadJson(); //获取表头数据
+    this.createGetTableInfo(); //获取表格数据
   },
   methods: {
     handleSelectAll(status) {
@@ -168,6 +106,7 @@ export default {
       console.log(this.selection);
     },
     rowClassName: function(row, index) {
+      //单双行更改class
       if (index % 2 == 0) {
         return "ivu-table-stripe-even";
       } else return "ivu-table-stripe-odd";
@@ -184,67 +123,80 @@ export default {
         //将当前行加入到selection
         this.$refs.selection.data[index]._checked=!this.$refs.selection.data[index]._checked
       },*/
-    getTableHeadJson() {//从vuex获取表头字段
-      alert(111)
-      this.columns4 = this.$store.state.table_head
+    getTableHeadJson() {//路由查询表头
+      //路由中获取url查询表头
+      this.to_url = this.$route.path; //从路由中获取参数url
+      //当路径改变根据path查询出来表头的内容
+      this.$http
+        .get("header/toData", { params: { info: this.to_url } }) //
+        .then(res => {
+          if (res.body.code == 200) {
+            // console.log("字段：" + JSON.stringify(res.body.data));
+            this.columns4 = res.body.data; //赋值
+            if (res.body.data.length > 0) {
+              var selection = {
+                type: "selection",
+                width: 60,
+                align: "center"
+              };
+              this.columns4.unshift(selection);
+            }
+          } else {
+            alert("字段数据加载失败");
+          }
+        });
+    },
+    getTableInfo(_if) {//获取表格数据
+      //获取需要请求的url
+      this.data_url = this.$store.state.data_url;
+      this.$http
+        .post(this.data_url, _if) //
+        .then(res => {
+          if (res.status == 200) {
+            var json = res.body.data;
+            json.forEach(item => {
+              item.create_time = moment(item.create_time).format('YYYY-MM-DD'); 
+            });
+            this.data1 = json; //赋值
+            this.page_num = res.body.page_num;
+            this.page_size = res.body.page_size;
+            this.total = res.body.total_count;
+          } else {
+            alert("字段数据加载失败");
+          }
+        });
+    },
+    createGetTableInfo() {//当页面初始化时候的调用
+      var _if = {
+        page_num: this.page_num,
+        page_size: this.page_size
+      };
+      this.getTableInfo(_if);
+    },
+    changePage(page_num) {//页码改变的回调
+      var _if = {
+        page_num: page_num,
+        page_size: this.page_size
+      };
+      this.getTableInfo(_if);
+    },
+    changePageSize(page_size) {//每页展示数量改变的回调
+      var _if = {
+        page_num: 1,
+        page_size: page_size
+      };
+      this.getTableInfo(_if);
+    },
+    searchForm(_if){//表单查询事件
+      _if.page_num = 1;
+      _if.page_size = this.page_size;
+      this.getTableInfo(_if);
+    },
+    add(){
+      //打开对话框，父组件调用子组件方法
+       this.$refs.dialogTab.openDialog(true);
     }
   }
 };
-// //创建表头字段
-// var table_head = [
-//         {
-//           type: "selection",
-//           width: 60,
-//           align: "center"
-//         },
-//         {
-//           title: "id",
-//           key: "id"
-//         },
-//         {
-//           title: "员工编号",
-//           key: "user_no"
-//         },
-//         {
-//           title: "用户名",
-//           key: "user_name"
-//         },
-//         {
-//           title: "密码",
-//           key: "password"
-//         },
-//         {
-//           title: "性别",
-//           key: "sex"
-//         },
-//         {
-//           title: "身份证号",
-//           key: "card_id"
-//         },
-//         {
-//           title: "邮箱",
-//           key: "email"
-//         },
-//         {
-//           title: "电话",
-//           key: "tel"
-//         },
-//         {
-//           title: "爱好",
-//           key: "hobby"
-//         },
-//         {
-//           title: "角色",
-//           key: "role_name"
-//         },
-//         {
-//           title: "创建时间",
-//           key: "create_time"
-//         },
-//         {
-//           title:"备注",
-//           key:"info"
-//         }
-//       ]
 </script>
 

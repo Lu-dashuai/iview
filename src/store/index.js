@@ -6,7 +6,8 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state:{
-        table_head:[]
+        data_url:'',
+        // _if = {}
     }
 });
 
