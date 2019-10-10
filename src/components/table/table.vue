@@ -192,9 +192,9 @@ export default {
       _if.page_size = this.page_size;
       this.getTableInfo(_if);
     },
-    add(){
+    add(bo){
       //打开对话框，父组件调用子组件方法
-       this.$refs.dialogTab.openDialog(true);
+       this.$refs.dialogTab.openDialog(bo);
     }
   }
 };

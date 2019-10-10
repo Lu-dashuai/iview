@@ -41,18 +41,20 @@ export default {
   },
   store,
   methods: {
-    getUserInfo() {
-      //全部获取员工信息
+    getUserInfo() {//全部获取员工信息
       this.$store.state.data_url = "user/getData"; //赋值
       // this.$store.state._if = this._if
     },
-    searchForm() {
+    searchForm() {//表头搜索框
       var _if = {
         user_name: this.user_name,
         user_no: this.user_no,
         card_id: this.card_id
       };
       this.$refs.tableTab.searchForm(_if);
+    },
+    add(){//点击弹出对话框
+      this.$refs.tableTab.add(true);//调用table组件的add方法
     }
   }
 };
