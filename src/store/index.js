@@ -8,6 +8,7 @@ const store = new Vuex.Store({
     state:{
         data_url:'',
         // _if = {}
+        del_url:''
     }
 });
 

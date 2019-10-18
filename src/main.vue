@@ -19,12 +19,12 @@
         <Submenu v-for="item in tree" :key="item.id" :name="item.id">
           <template slot="title">
             <Icon :type="item.iconcls" />
-            {{ item.name }}
+            {{ item.title }}
           </template>
-          <router-link v-for="it in item.childs" :key="item.id+'-'+it.id" :to="it.url">
+          <router-link v-for="it in item.children" :key="item.id+'-'+it.id" :to="it.url">
             <MenuItem :name="item.id +'-'+it.id">
               <Icon :type="it.iconcls" />
-              {{ it.name }}
+              {{ it.title }}
             </MenuItem>
           </router-link>
         </Submenu>
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     getTree() {
-      this.$http.get("power/getPower").then(res => {
+      this.$http.get("power/getPower",{ params: { role_id: null } }).then(res => {
         console.log(res)
         if (res.status == 200) {
           this.tree = res.body;
@@ -79,9 +79,9 @@ export default {
       var length = this.tree.length;
       //拼接tabbar
       for (var i = 0; i < length; i++) {
-        for (var j = 0; j < this.tree[i].childs.length; j++) {
-          if (this.tree[i].childs[j].url == path) {
-            this.add_tab.push(this.tree[i].name, this.tree[i].childs[j].name);
+        for (var j = 0; j < this.tree[i].children.length; j++) {
+          if (this.tree[i].children[j].url == path) {
+            this.add_tab.push(this.tree[i].title, this.tree[i].children[j].title);
           }
         }
       }

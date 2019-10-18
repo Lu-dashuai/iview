@@ -62,14 +62,14 @@
       show-elevator
       show-sizer
     />
-    <dialogTab ref="dialogTab"></dialogTab>
+    
   </div>
 </template>
 
 <script>
 import store from "../../store/index.js";
 import moment from "../../../node_modules/moment/moment.js";
-import dialogTab from "../dialog/userDialog.vue";
+
 export default {
   data() {
     return {
@@ -84,13 +84,11 @@ export default {
       total: 0, //数据总数
       show_total: 0,
       page_size_opts: [5, 10, 15, 20],
-      del_by_id: []
+      del_by_id: [],
+      del_url:'',
     };
   },
   store,
-  components: {
-    dialogTab
-  },
   created: function() {
     this.getTableHeadJson(); //获取表头数据
     this.createGetTableInfo(); //获取表格数据
@@ -141,6 +139,10 @@ export default {
               var btn = this.getbtn(); //获取后面两个按钮
               this.columns4.unshift(selection);
               this.columns4.push(btn);
+              if(this.to_url=='/admin/power'){
+                var act = this.getAct();
+                this.columns4.push(act);
+              }
             }
           } else {
             alert("字段数据加载失败");
@@ -194,6 +196,35 @@ export default {
       };
       return btn;
     },
+    getAct() {
+      //表格后面的按钮
+      var btn = {
+        title: "授权",
+        key: "action",
+        width: 150,
+        align: "center",
+        render: (h, params) => {
+          return h("div", [
+            h(
+              "Button",
+              {
+                props: {
+                  type: "success",
+                  size: "small"
+                },
+                on: {
+                  click: () => {
+                    this.power(params);
+                  }
+                }
+              },
+              "授权"
+            )
+          ]);
+        }
+      };
+      return btn;
+    },
     getTableInfo(_if) {
       //获取表格数据
       //获取需要请求的url
@@ -221,6 +252,7 @@ export default {
         page_num: this.page_num,
         page_size: this.page_size
       };
+      // alert('当页面初始化时候调用'+this.page_num+this.page_size)
       this.getTableInfo(_if);
     },
     changePage(page_num) {
@@ -245,34 +277,31 @@ export default {
       _if.page_size = this.page_size;
       this.getTableInfo(_if);
     },
-    add(bo,row) {
-      //打开对话框，父组件调用子组件方法
-      this.$refs.dialogTab.openDialog(bo,row);
-    },
     delByid(id) {
       if (id==null&&this.selecteds.length == 0) {
         this.$Message.warning("请选择至少一行删除!");
         return;
       }
+      this.del_url = this.$store.state.del_url;//全部删除的按钮url
 
       var temp = "";
-      var names = [];
+      // var names = [];
       for (var i = 0; i < this.selecteds.length; i++) {
         temp += this.selecteds[i].id + ",";
-        names.push(this.selecteds[i].user_name);
-        //开始删除
+        // names.push(this.selecteds[i].user_name);
       }
+      // alert(temp);
       temp = temp.substr(0, temp.length - 1);
       if(id!=null){
         temp = id;
+        this.del_url = this.$parent.del_url;
+        alert('父组件url：'+this.del_url);
       }
-      // alert(temp);
       this.$http
-        .get("user/deleteUser", { params: { ids: temp } }) //
+        .get(this.del_url, { params: { ids: temp } }) //
         .then(res => {
-          // alert(JSON.stringify(res))
           if (res.status == "200" && res.body.code == "200") {
-            this.$Message.success("删除姓名为：" + names + "成功!");
+            this.$Message.success("删除成功!");
             this.createGetTableInfo(); //删除成功刷新页面
           } else {
             this.$Message.error("删除失败!");
@@ -280,11 +309,15 @@ export default {
         });
     },
     updateRow(el) {
-      this.add(true,el.row)//打开对话框
+      this.$parent.add(true,el.row);//打开对话框并赋值
     },
     remove(el) {
       // alert(JSON.stringify(el.row.id))
       this.delByid(el.row.id);
+    },
+    power(el){
+      // alert(el.row.id)
+      this.$parent.power(true,el.row);
     }
   }
 };

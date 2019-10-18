@@ -3,41 +3,12 @@
     <Modal v-model="modal6" draggable :title="title" footer-hide >
       <div>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60" inline>
-          <FormItem label="用户名" prop="user_no">
-            <Input v-model="formValidate.user_no" placeholder="请输入用户名"></Input>
+          
+          <FormItem label="角色" prop="role_name">
+            <Input v-model="formValidate.role_name" placeholder="请输入角色名称"></Input>
           </FormItem>
-          <FormItem label="姓名" prop="user_name">
-            <Input v-model="formValidate.user_name" placeholder="请输入姓名"></Input>
-          </FormItem>
-          <FormItem label="密码" prop="password">
-            <Input v-model="formValidate.password" type="password" placeholder="请输入密码"></Input>
-          </FormItem>
-          <FormItem label="性别" prop="sex">
-            <RadioGroup v-model="formValidate.sex">
-              <Radio label="男">男</Radio>
-              <Radio label="女">女</Radio>
-            </RadioGroup>
-          </FormItem>
-          <FormItem label="身份证号" prop="card_id">
-            <Input v-model="formValidate.card_id" placeholder="请输入身份证号"></Input>
-          </FormItem>
-          <FormItem label="E-mail" prop="email">
-            <Input v-model="formValidate.email" placeholder="请输入身份e-mail"></Input>
-          </FormItem>
-          <FormItem label="电话" prop="tel">
-            <Input v-model="formValidate.tel" placeholder="请输入电话"></Input>
-          </FormItem>
-          <FormItem label="爱好" prop="hobby">
-            <CheckboxGroup v-model="formValidate.hobby">
-              <Checkbox label="笑" ></Checkbox>
-              <Checkbox label="还在那笑"></Checkbox>
-              <Checkbox label="嘿嘿"></Checkbox>
-            </CheckboxGroup>
-          </FormItem>
-          <FormItem label="角色" prop="role_id">
-            <Select v-model="formValidate.role_id" placeholder="请选择角色">
-              <Option v-for="item in options" :key="item.id" v-model="item.id">{{item.role_name}}</Option>
-            </Select>
+          <FormItem label="角色id" prop="id">
+            <Input v-model="formValidate.id" placeholder="自动生成，不用填写" readonly></Input>
           </FormItem>
           <FormItem label="备注" prop="info">
             <Input
@@ -67,16 +38,9 @@ export default {
       modal6: false,
       loading: true,
       formValidate: {
-        user_no:'',
-        user_name:'',
-        password:'',
-        sex:'',
-        card_id:'',
-        email:'',
-        tel:'',
-        hobby:'',
+        role_name:'',
         role_id:'',
-        info:''
+        role_info:''
       },
       ruleValidate: null,//表单校验
       options:[],//角色下拉框
@@ -92,35 +56,13 @@ export default {
       //父组件调用打开/关闭对话框
       this.clearDialog();//清空对话框
       this.modal6 = bo;
-      this.add_updata_url = 'user/addUser'
-      this.title = '添加用户'
+      this.add_updata_url = 'role/addRole'
+      this.title = '添加角色'
       if(row!=null){//不等于null，是update
-        this.title = '更改用户'
+        this.title = '更改角色'
         this.formValidate = row
-        this.add_updata_url = 'user/updateUser'
+        this.add_updata_url = 'role/updateRole'
       }
-      if(bo==true){
-        this.getRoleList();//加载下拉框列表
-      }
-    },
-    getRoleList(){
-      this.$http
-        .get("role/getRole") //
-        .then(res => {
-          if (res.status == '200') {
-          // alert(res.status)
-           this.options = res.body;
-           var obj = {
-             id: 0,
-             role_name: "请选择",
-             power_no: 0,
-             info: "请选择"
-           }
-           this.options.unshift(obj);
-          } else {
-            alert("字段数据加载失败");
-          }
-        });
     },
     handleSubmit(name) {//添加或者更改的方法
       console.log(this.formValidate);
@@ -148,16 +90,9 @@ export default {
     },
     clearDialog(){
       this.formValidate= {
-        user_no:'',
-        user_name:'',
-        password:'',
-        sex:'',
-        card_id:'',
-        email:'',
-        tel:'',
-        hobby:'',
+        role_name:'',
         role_id:'',
-        info:''
+        role_info:''
       }
     }
   }
