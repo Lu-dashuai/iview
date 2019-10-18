@@ -5,7 +5,7 @@
     <div class="outerbox">
       <div class="lf">
         <Button type="primary" shape="circle" @click="add()">添加</Button>&nbsp;&nbsp;&nbsp;
-        <Button type="error" shape="circle">删除</Button>&nbsp;&nbsp;&nbsp;
+        <Button type="error" shape="circle" @click="del()">删除</Button>&nbsp;&nbsp;&nbsp;
       </div>
       <div class="rg">
         姓名：
@@ -54,7 +54,10 @@ export default {
       this.$refs.tableTab.searchForm(_if);
     },
     add(){//点击弹出对话框
-      this.$refs.tableTab.add(true);//调用table组件的add方法
+      this.$refs.tableTab.add(true,null);//调用table组件的add方法
+    },
+    del(){//点击删除按钮
+      this.$refs.tableTab.delByid(null);//调用table组件的delbyid方法
     }
   }
 };

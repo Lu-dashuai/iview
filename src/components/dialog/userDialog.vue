@@ -9,8 +9,8 @@
           <FormItem label="姓名" prop="user_name">
             <Input v-model="formValidate.user_name" placeholder="请输入姓名"></Input>
           </FormItem>
-          <FormItem label="密码" prop="pass_word">
-            <Input v-model="formValidate.pass_word" type="password" placeholder="请输入密码"></Input>
+          <FormItem label="密码" prop="password">
+            <Input v-model="formValidate.password" type="password" placeholder="请输入密码"></Input>
           </FormItem>
           <FormItem label="性别" prop="sex">
             <RadioGroup v-model="formValidate.sex">
@@ -34,12 +34,9 @@
               <Checkbox label="嘿嘿"></Checkbox>
             </CheckboxGroup>
           </FormItem>
-          <FormItem label="角色" prop="role">
-            <Select v-model="formValidate.city" placeholder="请选择角色">
-              <Option value="">请选择</Option>
-              <Option value="1">管理员</Option>
-              <Option value="2">采购员</Option>
-              <Option value="3">清洁员</Option>
+          <FormItem label="角色" prop="role_id">
+            <Select v-model="formValidate.role_id" placeholder="请选择角色">
+              <Option v-for="item in options" :key="item.power_no" v-model="item.power_no">{{item.role_name}}</Option>
             </Select>
           </FormItem>
           <FormItem label="备注" prop="info">
@@ -63,6 +60,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 export default {
   data() {
     return {
@@ -81,24 +79,83 @@ export default {
         info:''
       },
       ruleValidate: null,//表单校验
+      options:[],//角色下拉框
+      add_updata_url:''
     };
   },
+  created:function(){
+  },
   methods: {
-    openDialog(bo) {
+    openDialog(bo,row) {
+      // alert(JSON.stringify(row))
       //父组件调用打开/关闭对话框
+      this.clearDialog();//清空对话框
       this.modal6 = bo;
+      this.add_updata_url = 'user/addUser'
+      if(row!=null){//不等于null，是update
+        this.formValidate = row
+        this.add_updata_url = 'user/updateUser'
+      }
+      if(bo==true){
+        this.getRoleList();//加载下拉框列表
+      }
     },
-    handleSubmit(name) {
+    getRoleList(){
+      this.$http
+        .get("role/getRoleList") //
+        .then(res => {
+          if (res.status == '200') {
+          // alert(res.status)
+           this.options = res.body;
+           var obj = {
+             id: 0,
+             role_name: "请选择",
+             power_no: 0,
+             info: "请选择"
+           }
+           this.options.unshift(obj);
+          } else {
+            alert("字段数据加载失败");
+          }
+        });
+    },
+    handleSubmit(name) {//添加或者更改的方法
+      console.log(this.formValidate);
       this.$refs[name].validate(valid => {
-        if (valid) {
-          this.$Message.success("添加成功!");
+          if (valid) {
+            this.$http
+            .post(this.add_updata_url,this.formValidate) //
+            .then(res => {
+              if (res.status == '200'&&res.body.code=='200') {
+              // alert(res.status)
+                this.$Message.success("成功!");
+                this.openDialog(false);
+                this.$parent.createGetTableInfo();
+              } else {
+                this.$Message.error("失败!");
+              }
+          });
         } else {
-          this.$Message.error("添加失败!");
+          this.$Message.error("失败!"); 
         }
       });
     },
     handleReset(name) {
       this.$refs[name].resetFields();
+    },
+    clearDialog(){
+      this.formValidate= {
+        user_no:'',
+        user_name:'',
+        password:'',
+        sex:'',
+        card_id:'',
+        email:'',
+        tel:'',
+        hobby:'',
+        role_id:'',
+        info:''
+      }
     }
   }
 };

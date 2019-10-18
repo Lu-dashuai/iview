@@ -37,12 +37,9 @@
 .ivu-table-row-hover td {
   background-color: #e6f7fe !important;
 }
-
-
 </style>
 <template>
   <div>
-    
     <Table
       ref="selection"
       @on-selection-change="onSelect"
@@ -71,8 +68,8 @@
 
 <script>
 import store from "../../store/index.js";
-import moment from "../../../node_modules/moment/moment.js"
-import dialogTab from '../dialog/userDialog.vue'
+import moment from "../../../node_modules/moment/moment.js";
+import dialogTab from "../dialog/userDialog.vue";
 export default {
   data() {
     return {
@@ -87,11 +84,11 @@ export default {
       total: 0, //数据总数
       show_total: 0,
       page_size_opts: [5, 10, 15, 20],
-      
+      del_by_id: []
     };
   },
   store,
-  components:{
+  components: {
     dialogTab
   },
   created: function() {
@@ -112,6 +109,7 @@ export default {
       } else return "ivu-table-stripe-odd";
     },
     onSelect(selection, index) {
+      //选择框返回整行数据
       // console.log(this.$refs.selection.data)
       this.selecteds = selection;
       console.log(this.selecteds);
@@ -123,7 +121,8 @@ export default {
         //将当前行加入到selection
         this.$refs.selection.data[index]._checked=!this.$refs.selection.data[index]._checked
       },*/
-    getTableHeadJson() {//路由查询表头
+    getTableHeadJson() {
+      //路由查询表头
       //路由中获取url查询表头
       this.to_url = this.$route.path; //从路由中获取参数url
       //当路径改变根据path查询出来表头的内容
@@ -139,14 +138,64 @@ export default {
                 width: 60,
                 align: "center"
               };
+              var btn = this.getbtn(); //获取后面两个按钮
               this.columns4.unshift(selection);
+              this.columns4.push(btn);
             }
           } else {
             alert("字段数据加载失败");
           }
         });
     },
-    getTableInfo(_if) {//获取表格数据
+    getbtn() {
+      //表格后面的按钮
+      var btn = {
+        title: "Action",
+        key: "action",
+        width: 150,
+        align: "center",
+        render: (h, params) => {
+          return h("div", [
+            h(
+              "Button",
+              {
+                props: {
+                  type: "primary",
+                  size: "small"
+                },
+                style: {
+                  marginRight: "5px"
+                },
+                on: {
+                  click: () => {
+                    this.updateRow(params);
+                  }
+                }
+              },
+              "更改"
+            ),
+            h(
+              "Button",
+              {
+                props: {
+                  type: "error",
+                  size: "small"
+                },
+                on: {
+                  click: () => {
+                    this.remove(params);
+                  }
+                }
+              },
+              "删除"
+            )
+          ]);
+        }
+      };
+      return btn;
+    },
+    getTableInfo(_if) {
+      //获取表格数据
       //获取需要请求的url
       this.data_url = this.$store.state.data_url;
       this.$http
@@ -155,7 +204,7 @@ export default {
           if (res.status == 200) {
             var json = res.body.data;
             json.forEach(item => {
-              item.create_time = moment(item.create_time).format('YYYY-MM-DD'); 
+              item.create_time = moment(item.create_time).format("YYYY-MM-DD");
             });
             this.data1 = json; //赋值
             this.page_num = res.body.page_num;
@@ -166,35 +215,76 @@ export default {
           }
         });
     },
-    createGetTableInfo() {//当页面初始化时候的调用
+    createGetTableInfo() {
+      //当页面初始化时候的调用
       var _if = {
         page_num: this.page_num,
         page_size: this.page_size
       };
       this.getTableInfo(_if);
     },
-    changePage(page_num) {//页码改变的回调
+    changePage(page_num) {
+      //页码改变的回调
       var _if = {
         page_num: page_num,
         page_size: this.page_size
       };
       this.getTableInfo(_if);
     },
-    changePageSize(page_size) {//每页展示数量改变的回调
+    changePageSize(page_size) {
+      //每页展示数量改变的回调
       var _if = {
         page_num: 1,
         page_size: page_size
       };
       this.getTableInfo(_if);
     },
-    searchForm(_if){//表单查询事件
+    searchForm(_if) {
+      //表单查询事件
       _if.page_num = 1;
       _if.page_size = this.page_size;
       this.getTableInfo(_if);
     },
-    add(bo){
+    add(bo,row) {
       //打开对话框，父组件调用子组件方法
-       this.$refs.dialogTab.openDialog(bo);
+      this.$refs.dialogTab.openDialog(bo,row);
+    },
+    delByid(id) {
+      if (id==null&&this.selecteds.length == 0) {
+        this.$Message.warning("请选择至少一行删除!");
+        return;
+      }
+
+      var temp = "";
+      var names = [];
+      for (var i = 0; i < this.selecteds.length; i++) {
+        temp += this.selecteds[i].id + ",";
+        names.push(this.selecteds[i].user_name);
+        //开始删除
+      }
+      temp = temp.substr(0, temp.length - 1);
+      if(id!=null){
+        temp = id;
+      }
+      // alert(temp);
+      this.$http
+        .get("user/deleteUser", { params: { ids: temp } }) //
+        .then(res => {
+          // alert(JSON.stringify(res))
+          if (res.status == "200" && res.body.code == "200") {
+            this.$Message.success("删除姓名为：" + names + "成功!");
+            this.createGetTableInfo(); //删除成功刷新页面
+          } else {
+            this.$Message.error("删除失败!");
+          }
+        });
+    },
+    updateRow(el) {
+      this.add(true,el.row)//打开对话框
+    },
+    remove(el) {
+      // alert(JSON.stringify(el.row.id))
+      this.delByid(el.row.id);
     }
   }
 };
