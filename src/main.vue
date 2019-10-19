@@ -39,7 +39,7 @@
         </Breadcrumb>
         <!-- 中间区域 -->
         <Card>
-          <div style="height: 600px">
+          <div style="height: 800px">
             <router-view></router-view>
           </div>
         </Card>

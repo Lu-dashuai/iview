@@ -43,7 +43,7 @@
     <Table
       ref="selection"
       @on-selection-change="onSelect"
-      height="475"
+      height="600"
       no-data-text="暂无数据"
       :row-class-name="rowClassName"
       :columns="columns4"

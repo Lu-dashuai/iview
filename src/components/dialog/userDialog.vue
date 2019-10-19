@@ -4,13 +4,13 @@
       <div>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60" inline>
           <FormItem label="用户名" prop="user_no">
-            <Input v-model="formValidate.user_no" placeholder="请输入用户名"></Input>
+            <Input v-model="formValidate.user_no" placeholder="请输入用户名" />
           </FormItem>
           <FormItem label="姓名" prop="user_name">
-            <Input v-model="formValidate.user_name" placeholder="请输入姓名"></Input>
+            <Input v-model="formValidate.user_name" placeholder="请输入姓名"/>
           </FormItem>
           <FormItem label="密码" prop="password">
-            <Input v-model="formValidate.password" type="password" placeholder="请输入密码"></Input>
+            <Input v-model="formValidate.password" type="password" placeholder="请输入密码" />
           </FormItem>
           <FormItem label="性别" prop="sex">
             <RadioGroup v-model="formValidate.sex">
@@ -19,13 +19,13 @@
             </RadioGroup>
           </FormItem>
           <FormItem label="身份证号" prop="card_id">
-            <Input v-model="formValidate.card_id" placeholder="请输入身份证号"></Input>
+            <Input v-model="formValidate.card_id" placeholder="请输入身份证号" />
           </FormItem>
           <FormItem label="E-mail" prop="email">
-            <Input v-model="formValidate.email" placeholder="请输入身份e-mail"></Input>
+            <Input v-model="formValidate.email" placeholder="请输入身份e-mail" />
           </FormItem>
           <FormItem label="电话" prop="tel">
-            <Input v-model="formValidate.tel" placeholder="请输入电话"></Input>
+            <Input v-model="formValidate.tel" placeholder="请输入电话" />
           </FormItem>
           <FormItem label="爱好" prop="hobby">
             <CheckboxGroup v-model="formValidate.hobby">
@@ -46,7 +46,7 @@
                
               :autosize="{minRows: 2,maxRows: 5}"
               placeholder="Enter something..."
-            ></Input>
+            />
           </FormItem>
           <div align="center">
             <FormItem>
@@ -74,7 +74,7 @@ export default {
         card_id:'',
         email:'',
         tel:'',
-        hobby:'',
+        hobby:[],
         role_id:'',
         info:''
       },

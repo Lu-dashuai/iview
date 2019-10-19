@@ -5,10 +5,10 @@
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60" inline>
           
           <FormItem label="角色" prop="role_name">
-            <Input v-model="formValidate.role_name" placeholder="请输入角色名称"></Input>
+            <Input v-model="formValidate.role_name" placeholder="请输入角色名称" />
           </FormItem>
           <FormItem label="角色id" prop="id">
-            <Input v-model="formValidate.id" placeholder="自动生成，不用填写" readonly></Input>
+            <Input v-model="formValidate.id" placeholder="自动生成，不用填写" readonly />
           </FormItem>
           <FormItem label="备注" prop="info">
             <Input
@@ -17,7 +17,7 @@
                
               :autosize="{minRows: 2,maxRows: 5}"
               placeholder="Enter something..."
-            ></Input>
+            />
           </FormItem>
           <div align="center">
             <FormItem>

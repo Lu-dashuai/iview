@@ -11,8 +11,8 @@ Vue.use(VueResource)
 import 'iview/dist/styles/iview.css';
 
 
-Vue.http.options.root = 'http://192.168.1.115:8090';
-// Vue.http.options.root = 'http://192.168.1.61:8090';
+Vue.http.options.root = 'http://192.168.1.123:8090';
+// Vue.http.options.root = 'http://192.168.1.123:8090';
 
 Vue.use(Router);
 Vue.use(iView);
