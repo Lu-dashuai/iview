@@ -8,10 +8,16 @@ import fangjianguanli from './components/content/fangjianguanli.vue'
 import jucan from './components/content/jucan.vue'
 import zhiriguanli from './components/content/zhiriguanli.vue'
 import wupinguanli from './components/content/wupinguanli.vue'
+import login from './components/login/login.vue'
 
 
 export default new Router({
   routes: [
+    {
+      path: '/',
+      component: login,
+      name: 'login'
+    },
     {
       path: '/admin/power',
       component: quanxianguanli
