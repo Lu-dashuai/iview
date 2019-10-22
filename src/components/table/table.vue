@@ -143,6 +143,10 @@ export default {
                 var act = this.getAct();
                 this.columns4.push(act);
               }
+              if(this.to_url=='/time/shop'){//获取详情按钮
+                var detil = this.getDetil();
+                this.columns4.push(detil);
+              }
             }
           } else {
             alert("字段数据加载失败");
@@ -219,6 +223,35 @@ export default {
                 }
               },
               "授权"
+            )
+          ]);
+        }
+      };
+      return btn;
+    },
+     getDetil() {
+      //表格后面的按钮
+      var btn = {
+        title: "详情",
+        key: "action",
+        width: 150,
+        align: "center",
+        render: (h, params) => {
+          return h("div", [
+            h(
+              "Button",
+              {
+                props: {
+                  type: "success",
+                  size: "small"
+                },
+                on: {
+                  click: () => {
+                    this.detil(params);
+                  }
+                }
+              },
+              "详情"
             )
           ]);
         }
@@ -318,6 +351,9 @@ export default {
     power(el){
       // alert(el.row.id)
       this.$parent.power(true,el.row);
+    },
+    detil(el){
+      alert('详情')
     }
   }
 };

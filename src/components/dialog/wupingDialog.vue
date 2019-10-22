@@ -3,47 +3,25 @@
     <Modal v-model="modal6" draggable :title="title" footer-hide >
       <div>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60" inline>
-          <FormItem label="用户名" prop="user_no">
-            <Input v-model="formValidate.user_no" placeholder="请输入用户名" />
+          <FormItem label="订单编号" prop="order_no">
+            <Input v-model="formValidate.order_no" placeholder="请输入订单编号" />
           </FormItem>
-          <FormItem label="姓名" prop="user_name">
-            <Input v-model="formValidate.user_name" placeholder="请输入姓名"/>
+          <FormItem label="订单名称" prop="order_name">
+            <Input v-model="formValidate.order_name" placeholder="请输入订单名称"/>
           </FormItem>
-          <FormItem label="密码" prop="password">
-            <Input v-model="formValidate.password" type="password" placeholder="请输入密码" />
+          <FormItem label="发起人" prop="user_name">
+            <Input v-model="formValidate.user_name" placeholder="请输入发起人" readonly/>
           </FormItem>
-          <FormItem label="性别" prop="sex">
-            <RadioGroup v-model="formValidate.sex">
-              <Radio label="男">男</Radio>
-              <Radio label="女">女</Radio>
-            </RadioGroup>
+          <FormItem label="订单状态" prop="order_status">
+            <Input v-model="formValidate.order_status" placeholder="请输入订单状态" readonly/>
           </FormItem>
-          <FormItem label="身份证号" prop="card_id">
-            <Input v-model="formValidate.card_id" placeholder="请输入身份证号" />
-          </FormItem>
-          <FormItem label="E-mail" prop="email">
-            <Input v-model="formValidate.email" placeholder="请输入身份e-mail" />
-          </FormItem>
-          <FormItem label="电话" prop="tel">
-            <Input v-model="formValidate.tel" placeholder="请输入电话" />
-          </FormItem>
-          <FormItem label="爱好" prop="hobby">
-            <CheckboxGroup v-model="formValidate.hobby">
-              <Checkbox label="笑" ></Checkbox>
-              <Checkbox label="还在那笑"></Checkbox>
-              <Checkbox label="嘿嘿"></Checkbox>
-            </CheckboxGroup>
-          </FormItem>
-          <FormItem label="角色" prop="role_id">
-            <Select v-model="formValidate.role_id" placeholder="请选择角色">
-              <Option v-for="item in options" :key="item.id" v-model="item.id">{{item.role_name}}</Option>
-            </Select>
+          <FormItem label="时间" prop="create_time">
+            <DatePicker type="datetime" placeholder="请选择时间" style="width: 200px" v-model="formValidate.create_time"></DatePicker>
           </FormItem>
           <FormItem label="备注" prop="info">
             <Input
               v-model="formValidate.info"
               type="textarea"
-               
               :autosize="{minRows: 2,maxRows: 5}"
               placeholder="Enter something..."
             />
@@ -67,21 +45,15 @@ export default {
       modal6: false,
       loading: true,
       formValidate: {
-        user_no:'',
+        order_no:'',
+        order_name:'',
         user_name:'',
-        password:'',
-        sex:'',
-        card_id:'',
-        email:'',
-        tel:'',
-        hobby:[],
-        role_id:'',
+        order_status:'',
+        create_time:'',
         info:''
       },
-      ruleValidate: null,//表单校验
-      options:[],//角色下拉框
       add_updata_url:'',
-      title:'用户添加'
+      title:'订单添加'
     };
   },
   created:function(){
@@ -92,12 +64,14 @@ export default {
       //父组件调用打开/关闭对话框
       this.clearDialog();//清空对话框
       this.modal6 = bo;
-      this.add_updata_url = 'user/addUser'
-      this.title = '添加用户'
+      
       if(row!=null){//不等于null，是update
-        this.title = '更改用户'
+        this.title = '订单更改'
         this.formValidate = row
-        this.add_updata_url = 'user/updateUser'
+        this.add_updata_url = 'order/updateOrder'
+      }else{
+        this.add_updata_url = 'order/addOrder'
+        this.title = '订单添加'
       }
       if(bo==true){
         this.getRoleList();//加载下拉框列表

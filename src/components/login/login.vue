@@ -4,7 +4,7 @@
             <img src="../../images/logo.png" >
             <span style="margin:0px 0px 0px 25px;font-size:25px;font-family: 'Poppins',sans-serif">管理系统</span>
         </div>
-        <div style="width:300px;margin:276px auto;">
+        <div style="width:300px;margin:200px auto;">
         <h1 style="margin:0 0 20px 110px;">登陆页面</h1>
         <Form ref="formInline" :model="formInline" :rules="ruleInline">
             <FormItem prop="user_no">
@@ -51,25 +51,16 @@
                         .post('power/login', this.formInline) //
                         .then(res => {
                             if (res.status == 200&&res.body.code==200) {
-                                // alert(JSON.stringify(res))
                                 this.$Message.success('Success!');
-                                var role_id = res.body.data
-                                this.$router.push({
-                                    path:'/admin/user',
-                                    query:{
-                                        role_id: role_id
-                                    }
-                                })
+                                this.$router.push(
+                                    '/admin/user'
+                                )
                             }else if(res.status == 200&&res.body.code!=200){
                                 this.$Message.error(res.body.msg);
                             } else {
                                 alert("字段数据加载失败");
                             }
                         });
-                        //   直接调用$router.push 实现携带参数的跳转
-                        // this.$router.push({
-                        // path: `/describe/${id}`,
-                        // })
                     } else {
                         this.$Message.error('Fail!');
                     }
