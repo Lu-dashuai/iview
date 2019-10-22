@@ -2,9 +2,9 @@
   <div>
     <Modal v-model="modal6" draggable :title="title" footer-hide >
       <div>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60" inline>
+        <Form ref="formValidate" :model="formValidate"  :label-width="60" inline>
           <FormItem label="订单编号" prop="order_no">
-            <Input v-model="formValidate.order_no" placeholder="请输入订单编号" />
+            <Input v-model="formValidate.order_no" placeholder="请输入订单编号" readonly />
           </FormItem>
           <FormItem label="订单名称" prop="order_name">
             <Input v-model="formValidate.order_name" placeholder="请输入订单名称"/>
@@ -12,11 +12,14 @@
           <FormItem label="发起人" prop="user_name">
             <Input v-model="formValidate.user_name" placeholder="请输入发起人" readonly/>
           </FormItem>
+          <FormItem label="金额(元)" prop="order_money">
+            <Input type="number" v-model="formValidate.order_money" placeholder="请输入金额" />
+          </FormItem>
           <FormItem label="订单状态" prop="order_status">
             <Input v-model="formValidate.order_status" placeholder="请输入订单状态" readonly/>
           </FormItem>
           <FormItem label="时间" prop="create_time">
-            <DatePicker type="datetime" placeholder="请选择时间" style="width: 200px" v-model="formValidate.create_time"></DatePicker>
+            <DatePicker v-model="formValidate.create_time" type="datetime" placeholder="请选择时间" style="width: 200px" ></DatePicker>
           </FormItem>
           <FormItem label="备注" prop="info">
             <Input
@@ -47,6 +50,7 @@ export default {
       formValidate: {
         order_no:'',
         order_name:'',
+        promoter_id:'',//发起人id
         user_name:'',
         order_status:'',
         create_time:'',
@@ -66,38 +70,26 @@ export default {
       this.modal6 = bo;
       
       if(row!=null){//不等于null，是update
+        // alert('订单更改');
         this.title = '订单更改'
+        console.log(row);
         this.formValidate = row
         this.add_updata_url = 'order/updateOrder'
       }else{
         this.add_updata_url = 'order/addOrder'
         this.title = '订单添加'
+        //订单添加初始化表单：时间，发起人，订单编号，订单状态
+        var date = new Date();
+        this.formValidate.order_no = date.getTime();//精确到毫秒，不会重复
+        // alert(date.getTime());
+        this.formValidate.create_time = date;
+        this.formValidate.user_name = this.$store.state.user.user_name//从vuex中获取username
+        this.formValidate.promoter_id = this.$store.state.user.id//发起人id
+        this.formValidate.order_status = '新建'//从vuex中获取username
       }
-      if(bo==true){
-        this.getRoleList();//加载下拉框列表
-      }
-    },
-    getRoleList(){
-      this.$http
-        .get("role/getRole") //
-        .then(res => {
-          if (res.status == '200') {
-          // alert(res.status)
-           this.options = res.body;
-           var obj = {
-             id: 0,
-             role_name: "请选择",
-             power_no: 0,
-             info: "请选择"
-           }
-           this.options.unshift(obj);
-          } else {
-            alert("字段数据加载失败");
-          }
-        });
     },
     handleSubmit(name) {//添加或者更改的方法
-      console.log(this.formValidate);
+      // console.log(this.formValidate);
       this.$refs[name].validate(valid => {
           if (valid) {
             this.$http
@@ -105,7 +97,7 @@ export default {
             .then(res => {
               if (res.status == '200') {
                 if(res.body.code=='201'){
-                  this.$Message.error("用户名重复!提交失败！");
+                  this.$Message.error("失败！");
                   this.openDialog(false);
                   this.$parent.reLoading();
                   return;
@@ -128,15 +120,12 @@ export default {
     },
     clearDialog(){
       this.formValidate= {
-        user_no:'',
+        order_no:'',
+        order_name:'',
+        promoter_id:'',//发起人id
         user_name:'',
-        password:'',
-        sex:'',
-        card_id:'',
-        email:'',
-        tel:'',
-        hobby:'',
-        role_id:'',
+        order_status:'',
+        create_time:'',
         info:''
       }
     }

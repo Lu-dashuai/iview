@@ -252,6 +252,21 @@ export default {
                 }
               },
               "详情"
+            ),
+            h(
+              "Button",
+              {
+                props: {
+                  type: "warning",
+                  size: "small"
+                },
+                on: {
+                  click: () => {
+                    this.lixiang(params);
+                  }
+                }
+              },
+              "立项"
             )
           ]);
         }
@@ -268,8 +283,10 @@ export default {
           if (res.status == 200) {
             var json = res.body.data;
             json.forEach(item => {
-              item.create_time = moment(item.create_time).format("YYYY-MM-DD");
+              // alert(item.create_time);
+              item.create_time = moment(item.create_time).format("YYYY-MM-DD HH:mm:ss");
             });
+            // alert(json)
             this.data1 = json; //赋值
             this.page_num = res.body.page_num;
             this.page_size = res.body.page_size;
@@ -328,7 +345,7 @@ export default {
       if(id!=null){
         temp = id;
         this.del_url = this.$parent.del_url;
-        alert('父组件url：'+this.del_url);
+        // alert('父组件url：'+this.del_url);
       }
       this.$http
         .get(this.del_url, { params: { ids: temp } }) //
@@ -354,6 +371,9 @@ export default {
     },
     detil(el){
       alert('详情')
+    },
+    lixiang(el){
+      this.$parent.lixiang(true,el.row);
     }
   }
 };

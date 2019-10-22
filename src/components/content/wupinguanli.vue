@@ -11,11 +11,13 @@
     <br/>
     <bdsTable ref="tableTab"></bdsTable>
     <dialogTab ref="dialogTab"></dialogTab>
+    <lixiang ref="lixiang"></lixiang>
   </div>
 </template>
 <script>
 import bdsTable from "../table/table.vue";
 import dialogTab from "../dialog/wupingDialog.vue";
+import lixiang from "../dialog/lixiang.vue";
 export default {
   data() {
     return {
@@ -25,6 +27,7 @@ export default {
   components: {
     bdsTable,
     dialogTab,
+    lixiang
   },
   created: function() {
     //获取全部角色信息
@@ -42,6 +45,12 @@ export default {
     add(bo,row){//点击弹出对话框
       this.$refs.dialogTab.openDialog(bo,row);
     },
+    reLoading(){
+      this.$refs.tableTab.createGetTableInfo();
+    },
+    lixiang(bo,row){
+      this.$refs.lixiang.openDialog(bo,row);
+    }
   }
 };
 </script>

@@ -105,6 +105,7 @@ export default {
         if (res.status == 200&&res.body.code==200) {
           var role_id = res.body.data.role_id;
           this.username = res.body.data.user_name;
+          this.$store.state.user = res.body.data;//存到vuex中
           this.$http.get("power/getPower",{ params: { role_id: role_id } }).then(res => {
             if (res.status == 200) {
               // alert(JSON.stringify(res.body))
