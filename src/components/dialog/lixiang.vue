@@ -14,6 +14,7 @@
       <div align="right">
           <Button type="primary" @click="handleSubmit()">提交</Button>
       </div>
+      <Spin size="large" fix v-if="spinShow"></Spin>
     </Modal>
   </div>
 </template>
@@ -28,7 +29,8 @@ export default {
       data1: this.getMockData(),
       targetKeys1: this.getTargetKeys(),
       order:{},
-      title:'立项'
+      title:'立项',
+      spinShow:false
     };
   },
   created: function() {},
@@ -91,13 +93,8 @@ export default {
     },
     handleSubmit() {
       //添加或者更改的方法
-      // console.log(this.formValidate);
-      // alert(this.targetKeys1)//参与人id
-      // alert(this.order.order_no);//订单编号
-      // alert(this.order.promoter_id);//发起人id
-      // alert(this.order.order_money);//发起人id
-      // alert(this.order.order_status);//发起人id
-      if (this.order.order_status=='新建') {
+      if (this.order.order_status=='新建'||this.order.order_status=='立项') {
+        this.spinShow=true;//加载中
         //发送请求生成账单表
         var param = {
           joiner:this.targetKeys1,
@@ -106,13 +103,18 @@ export default {
         this.$http
         .post("bill/addBill",param) //
         .then(res => {
+          // alert(JSON.stringify(res))
+          this.spinShow=false;//关闭加载中
+          if (res.status=='200'&&res.body.code=='200') {
+            this.$Message.success("已发送邮件，生成账单成功!");
+            this.modal6 = false;
+            this.$parent.reLoading();
 
+          } else{
+            this.$Message.error("生成账单失败!");
+          }
         });
-        
       }
-      
-          // this.$Message.success("成功!");
-          // this.$Message.error("失败!");
     }
   }
 };
