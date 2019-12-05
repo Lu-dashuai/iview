@@ -58,7 +58,7 @@
                             }else if(res.status == 200&&res.body.code!=200){
                                 this.$Message.error(res.body.msg);
                             } else {
-                                alert("字段数据加载失败");
+                                this.$Message.error("字段数据加载失败");
                             }
                         });
                     } else {
