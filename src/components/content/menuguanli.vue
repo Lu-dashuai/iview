@@ -146,7 +146,7 @@ export default {
           h("span", [
             h("Icon", {
               props: {
-                type: "ios-paper-outline"
+                type: data.iconcls
               },
               style: {
                 marginRight: "8px"
@@ -204,7 +204,7 @@ export default {
           h("span", [
             h("Icon", {
               props: {
-                type: "ios-paper-outline"
+                type: data.iconcls
               },
               style: {
                 marginRight: "8px"
