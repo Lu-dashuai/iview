@@ -22,7 +22,7 @@
     display: inline-block;
     line-height: 40px;
 }
-.cell2{
+span.cell2{
     height: 40px;
     vertical-align: middle;
     display: inline-block;

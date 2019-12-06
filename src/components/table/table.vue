@@ -373,7 +373,11 @@ export default {
       alert('详情')
     },
     lixiang(el){
-      this.$parent.lixiang(true,el.row);
+      if (el.row.order_status=='立项') {
+        this.$Message.warning("已立项，请勿重复操作!");
+      } else {
+        this.$parent.lixiang(true,el.row);
+      }
     }
   }
 };
