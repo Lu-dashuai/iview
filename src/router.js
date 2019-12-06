@@ -4,7 +4,7 @@ Vue.use(Router);
 import quanxianguanli from './components/content/quanxianguanli.vue'
 import renyuanguanli from './components/content/renyuanguanli.vue'
 import chuxing from './components/content/chuxing.vue'
-import fangjianguanli from './components/content/fangjianguanli.vue'
+import menuguanli from './components/content/menuguanli.vue'
 import jucan from './components/content/jucan.vue'
 import zhiriguanli from './components/content/zhiriguanli.vue'
 import wupinguanli from './components/content/wupinguanli.vue'
@@ -27,8 +27,8 @@ export default new Router({
       component: renyuanguanli
     },
     {
-      path: '/admin/room',
-      component: fangjianguanli
+      path: '/admin/menu',
+      component: menuguanli
     },
     {
       path: '/time/clean',
